@@ -34,7 +34,7 @@ Then visit **`http://localhost:8000`** in your browser.
 ### Option B: Double-click index.html
 Simply navigate to the project directory and double-click the **`index.html`** file to open it directly in your browser.
 
-### LIVE Link: (https://neelu741.github.io/hack2skill/)(Click)
+### LIVE Link: (https://neelu741.github.io/hack2skill/)
 
 ## 📄 License
 This project is open-source and available under the [MIT License](LICENSE).
