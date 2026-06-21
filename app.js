@@ -1,48 +1,48 @@
-// EcoImpact Core Application Javascript
+// EcoSphere Core Application Javascript
 
-// Constants for carbon calculations (kg CO2e)
+// Custom adjusted constants for carbon calculations (kg CO2e)
 const CO2_FACTORS = {
-    car: 0.404,        // per mile
-    transit: 0.14,     // per mile
-    beef: 6.0,         // per meal
-    vegetarian: 0.5,   // per meal
-    electricity: 0.38,  // per kWh
-    waste: 1.5         // per trash bag
+    car: 0.395,        // per mile
+    transit: 0.12,     // per mile
+    beef: 6.2,         // per meal
+    vegetarian: 0.45,  // per meal
+    electricity: 0.36, // per kWh
+    waste: 1.6         // per trash bag
 };
 
-// Initial state fallback if localStorage is empty
+// Initial state fallback if localStorage is empty (adjusted seed data)
 const INITIAL_LOGS = [
-    { date: '2026-06-15', car: 25, transit: 10, beef: 1, vegetarian: 1, electricity: 12, waste: 1, total: 24.56, breakdown: { transport: 11.5, food: 6.5, energy: 4.56, waste: 1.5 } },
-    { date: '2026-06-16', car: 10, transit: 15, beef: 0, vegetarian: 2, electricity: 10, waste: 0, total: 9.94, breakdown: { transport: 6.14, food: 1.0, energy: 3.8, waste: 0.0 } },
-    { date: '2026-06-17', car: 30, transit: 0, beef: 2, vegetarian: 0, electricity: 14, waste: 2, total: 32.44, breakdown: { transport: 12.12, food: 12.0, energy: 5.32, waste: 3.0 } },
-    { date: '2026-06-18', car: 0, transit: 20, beef: 0, vegetarian: 3, electricity: 9, waste: 1, total: 8.52, breakdown: { transport: 2.8, food: 1.5, energy: 3.42, waste: 1.5 } },
-    { date: '2026-06-19', car: 15, transit: 5, beef: 1, vegetarian: 2, electricity: 11, waste: 0, total: 17.54, breakdown: { transport: 6.76, food: 7.0, energy: 4.18, waste: 0.0 } },
-    { date: '2026-06-20', car: 5, transit: 25, beef: 0, vegetarian: 2, electricity: 10, waste: 1, total: 11.32, breakdown: { transport: 5.52, food: 1.0, energy: 3.8, waste: 1.5 } },
-    { date: '2026-06-21', car: 12, transit: 10, beef: 1, vegetarian: 1, electricity: 10, waste: 1, total: 14.15, breakdown: { transport: 6.25, food: 6.5, energy: 3.8, waste: 1.5 } }
+    { date: '2026-06-15', car: 22, transit: 8, beef: 1, vegetarian: 1, electricity: 11, waste: 1, total: 20.85, breakdown: { transport: 9.65, food: 6.65, energy: 3.96, waste: 1.6 } },
+    { date: '2026-06-16', car: 8, transit: 12, beef: 0, vegetarian: 2, electricity: 9, waste: 0, total: 8.74, breakdown: { transport: 4.6, food: 0.9, energy: 3.24, waste: 0.0 } },
+    { date: '2026-06-17', car: 28, transit: 0, beef: 2, vegetarian: 0, electricity: 13, waste: 2, total: 29.54, breakdown: { transport: 11.06, food: 12.4, energy: 4.68, waste: 3.2 } },
+    { date: '2026-06-18', car: 0, transit: 18, beef: 0, vegetarian: 3, electricity: 8, waste: 1, total: 7.99, breakdown: { transport: 2.16, food: 1.35, energy: 2.88, waste: 1.6 } },
+    { date: '2026-06-19', car: 12, transit: 4, beef: 1, vegetarian: 2, electricity: 10, waste: 0, total: 15.35, breakdown: { transport: 5.22, food: 7.1, energy: 3.6, waste: 0.0 } },
+    { date: '2026-06-20', car: 4, transit: 22, beef: 0, vegetarian: 2, electricity: 9, waste: 1, total: 10.36, breakdown: { transport: 4.22, food: 0.9, energy: 3.24, waste: 1.6 } },
+    { date: '2026-06-21', car: 10, transit: 8, beef: 1, vegetarian: 1, electricity: 9, waste: 1, total: 12.21, breakdown: { transport: 4.91, food: 6.65, energy: 3.24, waste: 1.6 } }
 ];
 
 const AVAILABLE_ACTIONS = [
-    { id: 'ev_car', title: 'Drive an Electric Vehicle', desc: 'Replace your gasoline car usage with electric or plug-in hybrid transport.', impact: 3200, category: 'transport', icon: 'zap' },
-    { id: 'bike_commute', title: 'Bike to Work & Errands', desc: 'Swap 3 drives a week for cycling or walking.', impact: 850, category: 'transport', icon: 'bike' },
-    { id: 'vegetarian_diet', title: 'Adopt a Vegetarian Diet', desc: 'Eliminate meat meals entirely from your week.', impact: 1400, category: 'food', icon: 'leaf' },
-    { id: 'led_lights', title: 'LED Lighting Upgrade', desc: 'Replace all old incandescent home bulbs with highly efficient LEDs.', impact: 300, category: 'energy', icon: 'lightbulb' },
-    { id: 'solar_panels', title: 'Solar Array Panels', desc: 'Install standard residential rooftop solar panels.', impact: 2800, category: 'energy', icon: 'sun' },
-    { id: 'compost_waste', title: 'Composting & Recycle', desc: 'Compost organic leftovers and recycle metal, plastic, paper properly.', impact: 450, category: 'waste', icon: 'trash-2' }
+    { id: 'ev_car', title: 'Transition to Electric Mobility', desc: 'Swap combustion engine travel for electric vehicle commuting or green public fleets.', impact: 3300, category: 'transport', icon: 'zap' },
+    { id: 'bike_commute', title: 'Pedal-Powered Commutes', desc: 'Replace short vehicular commutes with active cycling or walking routes.', impact: 900, category: 'transport', icon: 'bike' },
+    { id: 'vegetarian_diet', title: 'Green Plate Lifestyle', desc: 'Opt out of resource-heavy meat dishes and eat plant-derived foods.', impact: 1500, category: 'food', icon: 'leaf' },
+    { id: 'led_lights', title: 'Smart LED Retrofitting', desc: 'Upgrade household fixtures to energy-efficient smart LED bulbs.', impact: 320, category: 'energy', icon: 'lightbulb' },
+    { id: 'solar_panels', title: 'Rooftop Solar Harvesting', desc: 'Install localized solar modules to generate emission-free electricity.', impact: 2900, category: 'energy', icon: 'sun' },
+    { id: 'compost_waste', title: 'Zero-Waste Composting', desc: 'Properly segregate recyclables and compost organic waste to reduce landfills.', impact: 480, category: 'waste', icon: 'trash-2' }
 ];
 
 const BADGES_LIST = [
-    { id: 'badge_commute', title: 'Low Carbon Commuter', desc: 'Log a day with 0 car miles.', criteria: '0 car miles in a log', unlocked: true, icon: 'bike' },
-    { id: 'badge_green_chef', title: 'Plant-Based Warrior', desc: 'Log a day with only vegetarian/vegan meals.', criteria: 'No beef meals logged', unlocked: true, icon: 'utensils-crossed' },
-    { id: 'badge_energy_saver', title: 'Grid Optimizer', desc: 'Log under 5 kWh of home electricity.', criteria: 'Electricity < 5 kWh', unlocked: false, icon: 'zap-off' },
-    { id: 'badge_zero_waste', title: 'Zero Waste Champion', desc: 'Log a day with 0 waste bags discarded.', criteria: '0 trash bags logged', unlocked: false, icon: 'shield-check' }
+    { id: 'badge_commute', title: 'Eco Rider', desc: 'Logged an active day with zero personal car usage.', criteria: '0 car miles in a log', unlocked: true, icon: 'bike' },
+    { id: 'badge_green_chef', title: 'Herbivore Hero', desc: 'Logged a day consuming purely vegetarian and vegan meals.', criteria: 'No beef meals logged', unlocked: true, icon: 'utensils-crossed' },
+    { id: 'badge_energy_saver', title: 'Watt Saver', desc: 'Kept residential electricity draw under 5 kWh.', criteria: 'Electricity < 5 kWh', unlocked: false, icon: 'zap-off' },
+    { id: 'badge_zero_waste', title: 'Circular Champion', desc: 'Logged a zero-waste day without any discarded waste bags.', criteria: '0 trash bags logged', unlocked: false, icon: 'shield-check' }
 ];
 
 // App State
 let state = {
-    logs: JSON.parse(localStorage.getItem('eco_logs')) || INITIAL_LOGS,
-    streak: parseInt(localStorage.getItem('eco_streak')) || 3,
-    committedActions: JSON.parse(localStorage.getItem('eco_committed')) || [],
-    badges: JSON.parse(localStorage.getItem('eco_badges')) || BADGES_LIST
+    logs: JSON.parse(localStorage.getItem('ecosphere_logs')) || INITIAL_LOGS,
+    streak: parseInt(localStorage.getItem('ecosphere_streak')) || 3,
+    committedActions: JSON.parse(localStorage.getItem('ecosphere_committed')) || [],
+    badges: JSON.parse(localStorage.getItem('ecosphere_badges')) || BADGES_LIST
 };
 
 // Global Chart References
@@ -62,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Save state helper
 function saveState() {
-    localStorage.setItem('eco_logs', JSON.stringify(state.logs));
-    localStorage.setItem('eco_streak', state.streak.toString());
-    localStorage.setItem('eco_committed', JSON.stringify(state.committedActions));
-    localStorage.setItem('eco_badges', JSON.stringify(state.badges));
+    localStorage.setItem('ecosphere_logs', JSON.stringify(state.logs));
+    localStorage.setItem('ecosphere_streak', state.streak.toString());
+    localStorage.setItem('ecosphere_committed', JSON.stringify(state.committedActions));
+    localStorage.setItem('ecosphere_badges', JSON.stringify(state.badges));
 }
 
 // 1. Navigation handling
@@ -152,6 +152,18 @@ function renderDashboardData() {
     document.getElementById('budget-bar').style.width = `${budgetPct}%`;
     document.getElementById('budget-used').textContent = `${Math.round(totalMonthUsage)} kg`;
     document.getElementById('budget-total').textContent = `${monthlyBudget} kg budget`;
+
+    // Calculate Virtual Trees Saved (1 Tree = 22kg CO2e offset per year)
+    let totalSavings = 0;
+    const activeActions = AVAILABLE_ACTIONS.filter(act => state.committedActions.includes(act.id));
+    activeActions.forEach(action => {
+        totalSavings += action.impact;
+    });
+    const treesSaved = (totalSavings / 22).toFixed(1);
+    const offsetTreesEl = document.getElementById('offset-trees');
+    if (offsetTreesEl) {
+        offsetTreesEl.textContent = treesSaved;
+    }
 
     renderInsights(todayLog);
     renderCharts();
@@ -447,6 +459,7 @@ function toggleAction(id) {
     }
 
     updateSandboxSummary();
+    renderDashboardData();
 }
 
 function updateSandboxSummary() {

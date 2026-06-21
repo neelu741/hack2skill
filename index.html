@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoImpact - Live Carbon Footprint Tracker & Insights</title>
-    <meta name="description" content="Track your daily carbon footprint, simulate environmental changes with live interactive tools, and commit to sustainability challenges.">
+    <title>EcoSphere - Interactive Carbon Ledger & Impact Simulator</title>
+    <meta name="description" content="Calculate your daily carbon budget, run real-time ecological simulators, commit to zero-waste achievements, and track your sustainability score.">
     <link rel="stylesheet" href="styles.css">
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,9 +24,9 @@
         <aside class="sidebar glass">
             <div class="brand">
                 <div class="logo-icon">
-                    <i data-lucide="leaf"></i>
+                    <i data-lucide="globe"></i>
                 </div>
-                <h2>EcoImpact</h2>
+                <h2>EcoSphere</h2>
             </div>
             
             <nav class="nav-menu">
@@ -151,6 +151,21 @@
                                 <span id="budget-total">500 kg budget</span>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Eco Offset & Tree Equivalency Card -->
+                    <div class="card glass offset-card">
+                        <h3>Green Canopy Offset</h3>
+                        <div class="offset-content">
+                            <div class="offset-icon-container">
+                                <i data-lucide="trees" class="trees-icon"></i>
+                            </div>
+                            <div class="offset-stats">
+                                <span class="offset-number" id="offset-trees">14.1</span>
+                                <span class="offset-label">Trees Saved / Year</span>
+                            </div>
+                        </div>
+                        <p class="offset-helper">Your committed eco actions save enough carbon to match these mature trees.</p>
                     </div>
                 </div>
             </section>
