@@ -1,0 +1,29 @@
+# System Files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editor / IDE configuration
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local Agent Workspace Data
+.gemini/
+.agents/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node dependencies (if initialized later)
+node_modules/
+dist/
+build/

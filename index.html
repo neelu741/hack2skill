@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoImpact - Live Carbon Footprint Tracker & Insights</title>
+    <meta name="description" content="Track your daily carbon footprint, simulate environmental changes with live interactive tools, and commit to sustainability challenges.">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Confetti Canvas Container -->
+    <div id="confetti-container" class="confetti-container"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i data-lucide="leaf"></i>
+                </div>
+                <h2>EcoImpact</h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="simulator">
+                    <i data-lucide="sliders"></i>
+                    <span>Simulator</span>
+                </button>
+                <button class="nav-item" data-tab="sandbox">
+                    <i data-lucide="shield-check"></i>
+                    <span>Action Sandbox</span>
+                </button>
+                <button class="nav-item" data-tab="achievements">
+                    <i data-lucide="trophy"></i>
+                    <span>Achievements</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="streak-badge">
+                    <i data-lucide="flame" class="streak-icon"></i>
+                    <div class="streak-info">
+                        <span class="value" id="nav-streak">3 Days</span>
+                        <span class="label">Logging Streak</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header glass">
+                <div class="welcome">
+                    <h1>Green Evening!</h1>
+                    <p>Here is your environmental impact footprint summary.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="open-logger-btn">
+                        <i data-lucide="plus"></i>
+                        <span>Log Today's Impact</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- Score card -->
+                    <div class="card glass score-card">
+                        <h3>Daily Footprint Score</h3>
+                        <div class="gauge-wrapper">
+                            <svg class="progress-ring" width="200" height="200">
+                                <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" r="80" cx="100" cy="100"/>
+                                <circle class="progress-ring__circle" stroke="url(#gaugeGradient)" stroke-width="12" fill="transparent" r="80" cx="100" cy="100"/>
+                                <defs>
+                                    <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#00f2fe" />
+                                        <stop offset="100%" stop-color="#4facfe" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="gauge-text">
+                                <span class="score-value" id="current-score">14.2</span>
+                                <span class="score-unit">kg CO₂e</span>
+                            </div>
+                        </div>
+                        <div class="score-footer">
+                            <span class="status-indicator low" id="score-status">Good (Below Avg)</span>
+                        </div>
+                    </div>
+
+                    <!-- Footprint Breakdown -->
+                    <div class="card glass chart-card">
+                        <div class="card-header">
+                            <h3>Emissions Breakdown</h3>
+                            <span class="info-tooltip" title="Daily average breakdown of logged carbon footprint"><i data-lucide="info"></i></span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="breakdownChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Footprint History / Line Chart -->
+                    <div class="card glass chart-card span-two-cols">
+                        <div class="card-header">
+                            <h3>Weekly Trends</h3>
+                            <div class="trend-tabs">
+                                <button class="trend-tab active" data-range="7">7 Days</button>
+                                <button class="trend-tab" data-range="30">30 Days</button>
+                            </div>
+                        </div>
+                        <div class="chart-container-large">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Daily Goals & Actionable Summary Card -->
+                    <div class="card glass summary-card">
+                        <h3>Today's Insights</h3>
+                        <div class="insight-list" id="dashboard-insights">
+                            <!-- Dynamically Generated -->
+                        </div>
+                    </div>
+
+                    <!-- Monthly Goals / Limits -->
+                    <div class="card glass progress-card">
+                        <h3>Monthly Budget</h3>
+                        <div class="progress-wrapper">
+                            <div class="progress-header">
+                                <span>CO₂ Allowance Used</span>
+                                <span id="budget-percentage">62%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="budget-bar" style="width: 62%;"></div>
+                            </div>
+                            <div class="progress-labels">
+                                <span id="budget-used">310 kg</span>
+                                <span id="budget-total">500 kg budget</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Simulator View -->
+            <section id="simulator" class="tab-content">
+                <div class="section-intro">
+                    <h2>Live Carbon Footprint Simulator</h2>
+                    <p>Adjust the sliders below to estimate your annual carbon footprint and instantly see how your choices compare to target goals.</p>
+                </div>
+                
+                <div class="simulator-layout">
+                    <!-- Sliders panel -->
+                    <div class="card glass simulator-sliders">
+                        <h3>Adjust Daily & Weekly Habits</h3>
+                        
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label><i data-lucide="car"></i> Driving (miles/week)</label>
+                                <span class="slider-value" id="val-driving">150 miles</span>
+                            </div>
+                            <input type="range" id="sim-driving" min="0" max="600" value="150" class="input-slider">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label><i data-lucide="plane"></i> Flights (hours/year)</label>
+                                <span class="slider-value" id="val-flights">10 hours</span>
+                            </div>
+                            <input type="range" id="sim-flights" min="0" max="100" value="10" class="input-slider">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label><i data-lucide="home"></i> Electricity Source (% Clean/Renewable)</label>
+                                <span class="slider-value" id="val-clean-energy">20%</span>
+                            </div>
+                            <input type="range" id="sim-clean-energy" min="0" max="100" value="20" class="input-slider">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label><i data-lucide="utensils"></i> Meat consumption (meals/week)</label>
+                                <span class="slider-value" id="val-meat">10 meals</span>
+                            </div>
+                            <input type="range" id="sim-meat" min="0" max="21" value="10" class="input-slider">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label><i data-lucide="trash-2"></i> Household Waste (trash bags/week)</label>
+                                <span class="slider-value" id="val-waste">3 bags</span>
+                            </div>
+                            <input type="range" id="sim-waste" min="0" max="10" value="3" class="input-slider">
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Realtime projection -->
+                    <div class="card glass simulator-results">
+                        <h3>Simulated Annual Total</h3>
+                        <div class="large-stats">
+                            <div class="stat-main">
+                                <span class="stat-number" id="sim-total-co2">4.8</span>
+                                <span class="stat-unit">Tons CO₂e / year</span>
+                            </div>
+                            
+                            <div class="bar-comparison-container">
+                                <div class="bar-row">
+                                    <span class="bar-label">You (Simulated)</span>
+                                    <div class="bar-fill-track">
+                                        <div class="bar-fill you" id="sim-bar-you" style="width: 30%;"></div>
+                                    </div>
+                                    <span class="bar-val" id="sim-val-you">4.8T</span>
+                                </div>
+                                <div class="bar-row">
+                                    <span class="bar-label">US Avg</span>
+                                    <div class="bar-fill-track">
+                                        <div class="bar-fill us-avg" style="width: 100%;"></div>
+                                    </div>
+                                    <span class="bar-val">16.0T</span>
+                                </div>
+                                <div class="bar-row">
+                                    <span class="bar-label">Paris Target</span>
+                                    <div class="bar-fill-track">
+                                        <div class="bar-fill paris-target" style="width: 12.5%;"></div>
+                                    </div>
+                                    <span class="bar-val">2.0T</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="gauge-alert" id="sim-alert-box">
+                            <div class="alert-icon"><i data-lucide="thumbs-up"></i></div>
+                            <div class="alert-text">
+                                <strong id="sim-alert-title">Amazing!</strong>
+                                <span id="sim-alert-desc">You are currently on track to meet climate targets.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions Sandbox View -->
+            <section id="sandbox" class="tab-content">
+                <div class="section-intro">
+                    <h2>Eco Action Sandbox</h2>
+                    <p>Commit to actions and calculate the exact projected savings to lower your daily carbon score.</p>
+                </div>
+
+                <div class="sandbox-layout">
+                    <!-- Action Grid list -->
+                    <div class="actions-grid" id="actions-list">
+                        <!-- Dynamic generated cards -->
+                    </div>
+
+                    <!-- Impact projection drawer -->
+                    <div class="card glass action-summary-card">
+                        <h3>Simulated Impact Sandbox</h3>
+                        
+                        <div class="sandbox-stats">
+                            <div class="sandbox-stat">
+                                <div class="stat-value text-accent" id="committed-savings">0 kg</div>
+                                <div class="stat-label">Committed Yearly Reduction</div>
+                            </div>
+                            <div class="sandbox-stat">
+                                <div class="stat-value text-cyan" id="committed-count">0</div>
+                                <div class="stat-label">Active Habits Selected</div>
+                            </div>
+                        </div>
+
+                        <hr class="card-divider">
+
+                        <h3>My Committed Eco Habits</h3>
+                        <div class="committed-habits-list" id="committed-habits">
+                            <p class="placeholder-text">Click the checkmark on cards to select and simulate habits!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Achievements View -->
+            <section id="achievements" class="tab-content">
+                <div class="section-intro">
+                    <h2>Eco Badges & Gamification</h2>
+                    <p>Earn points and unlock dynamic milestones based on your green activities. Tap locked badges to view requirements or simulate test unlocks!</p>
+                </div>
+
+                <div class="badges-grid" id="badges-container">
+                    <!-- Dynamic badges here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Daily Logger Modal Drawer -->
+    <div class="modal-overlay" id="logger-modal">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h2>Daily Footprint Logger</h2>
+                <button class="close-btn" id="close-logger-btn"><i data-lucide="x"></i></button>
+            </div>
+            
+            <form id="logger-form" class="modal-body">
+                <div class="input-grid">
+                    <!-- Transport -->
+                    <div class="input-group">
+                        <label for="log-car"><i data-lucide="car"></i> Driving Distance (miles)</label>
+                        <input type="number" id="log-car" min="0" placeholder="0" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label for="log-transit"><i data-lucide="bus"></i> Public Transit (miles)</label>
+                        <input type="number" id="log-transit" min="0" placeholder="0" class="input-field">
+                    </div>
+                    <!-- Food -->
+                    <div class="input-group">
+                        <label for="log-beef"><i data-lucide="beef"></i> Beef Meals eaten</label>
+                        <input type="number" id="log-beef" min="0" placeholder="0" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label for="log-vegetarian"><i data-lucide="leaf"></i> Vegetarian Meals eaten</label>
+                        <input type="number" id="log-vegetarian" min="0" placeholder="0" class="input-field">
+                    </div>
+                    <!-- Energy -->
+                    <div class="input-group">
+                        <label for="log-electricity"><i data-lucide="zap"></i> Home Electricity Used (kWh)</label>
+                        <input type="number" id="log-electricity" min="0" placeholder="0" class="input-field">
+                    </div>
+                    <!-- Waste -->
+                    <div class="input-group">
+                        <label for="log-waste"><i data-lucide="trash-2"></i> Trash Bags discarded</label>
+                        <input type="number" id="log-waste" min="0" placeholder="0" class="input-field">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-logger-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script connection -->
+    <script src="app.js"></script>
+</body>
+</html>
